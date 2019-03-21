@@ -124,9 +124,6 @@ def fetch_corporation_kills_zkill(corpID, month):
 
 
 
-# try:
-#   json_zkill = read_json(98504356, "zkill")
-# except:
 json_zkill = fetch_corporation_kills_zkill(98504356, 2) 
 json_ccp = fetch_ccp_kill_info(json_zkill)
 write_file(98504356, json_ccp, "ccp")
