@@ -54,24 +54,47 @@ def fetch_ccp_kill_info(zkb_json):
 
 def fetch_corporation_kills_zkill(corpID, month):
   pageNumber = 1
+  json_zkill = {}
   headers = { 'user-agent': 'Maintainer: Arya Elf-Bron', 'Accept-Encoding': 'gzip'}
-  urlParams = [ 'corporationID', str(corpID), 'month', month, 'page' ]
-  if DEBUG: print("requesting page:", pageNumber) 
+  urlParams = [ 'corporationID', str(corpID), 'npc', 0, 'kills', 'month', month, 'page' ]
+
+  if DEBUG: print("requesting kills page:", pageNumber) 
   url = get_url(urlParams, pageNumber)
   r = requests.get(url, headers=headers)
   r = r.json()
-  json_zkill = r
+  json_zkill["kills"] = r
   if DEBUG: print("length of r:", len(r)) 
   while len(r) == 200:
     pageNumber += 1
     time.sleep(1)
-    if DEBUG: print("requesting page:", pageNumber)
+    if DEBUG: print("requesting kills page:", pageNumber)
     url = get_url(urlParams, pageNumber) 
     r = requests.get(url, headers=headers)
     r = r.json()
-    json_zkill = json_zkill + r
+    json_zkill["kills"] += r
     if DEBUG: print("length of r:", len(r)) 
   if DEBUG: print("Final length", len(json_zkill))
+  
+  urlParams = [ 'corporationID', str(corpID), 'losses', 'npc', 0, 'month', month, 'page' ]
+
+  pageNumber = 1
+  if DEBUG: print("requesting losses page:", pageNumber) 
+  url = get_url(urlParams, pageNumber)
+  r = requests.get(url, headers=headers)
+  r = r.json()
+  json_zkill["losses"] = r
+  if DEBUG: print("length of r:", len(r)) 
+  while len(r) == 200:
+    pageNumber += 1
+    time.sleep(1)
+    if DEBUG: print("requesting losses page:", pageNumber)
+    url = get_url(urlParams, pageNumber) 
+    r = requests.get(url, headers=headers)
+    r = r.json()
+    json_zkill["losses"] += r
+    if DEBUG: print("length of r:", len(r)) 
+  if DEBUG: print("Final num of mails", len(json_zkill["kills"]))
+
   if DEBUG: print("Now fetching from CCP servers")
   write_file(corpID, json_zkill, "zkill")
   if DEBUG: print('Now saving to file')
@@ -80,8 +103,12 @@ def fetch_corporation_kills_zkill(corpID, month):
 
 
 # fetch_corporation_kills_zkill(98504356, 1) # Mcav
-# fetch_corporation_kills_zkill(1705300610, 1) 
-json_zkill = read_json(1705300610, "zkill")
-json_ccp = fetch_ccp_kill_info(json_zkill)
-write_file(1705300610, json_ccp, "ccp")
+# try:
+#   json_zkill = read_json(98504356, "zkill")
+# except:
+json_zkill = fetch_corporation_kills_zkill(98504356, 2) 
+print ("num of kills", len(json_zkill["kills"]))
+print ("num of losses", len(json_zkill["losses"]))
+# json_ccp = fetch_ccp_kill_info(json_zkill)
+# write_file(98504356, json_ccp, "ccp")
 
