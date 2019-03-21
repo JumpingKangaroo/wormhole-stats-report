@@ -1,3 +1,5 @@
 /.vscode
 /out.txt
 /*.json
+/*.db
+/__pycache__/

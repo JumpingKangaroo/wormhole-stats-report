@@ -1,0 +1,14 @@
+Killmail
+  from zkb json
+    id - int 
+    hash - string 
+    locationID - int 
+    fittedValue - float
+    npc - bool
+    awox - bool
+  from ccp json
+    attackers (list of dicts) - serialized string 
+    victimShipType - int 
+    victimDamage - int 
+    victimCorp - int 
+    victimAlliance - int 

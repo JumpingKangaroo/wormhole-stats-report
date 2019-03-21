@@ -40,7 +40,7 @@ def fetch_ccp_kill_info(zkb_json):
   for kill in zkb_json["kills"]:
     baseUrl = "https://esi.evetech.net/dev/killmails/"
     url = baseUrl + str(kill["killmail_id"]) + "/" + kill["zkb"]["hash"] + "/"
-    if DEBUG: print("Getting:", i, "of", size, "\tccp url:", url)
+    if DEBUG: print("Getting:", i, "of", size, "\tcc  p url:", url)
     success = False 
     while not success:
       try:
