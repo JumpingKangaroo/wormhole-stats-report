@@ -4,8 +4,8 @@ Killmail
     hash - string 
     locationID - int 
     fittedValue - float
-    npc - bool
-    awox - bool
+    npc - int (bool)
+    awox - int (bool)
   from ccp json
     attackers (list of dicts) - serialized string 
     victimShipType - int 
