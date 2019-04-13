@@ -122,6 +122,10 @@ def fetch_corporation_kills_zkill(corpID, month):
   if DEBUG: print('Now saving to file')
   return json_zkill
 
+def fetch_corp_info(corpID, month):
+  json_zkill = fetch_corporation_kills_zkill(corpID, month)
+  json_ccp = fetch_ccp_kill_info(json_zkill)
+  write_file(corpID, json_ccp, "ccp")
 
 if __name__ == "__main__":
   json_zkill = fetch_corporation_kills_zkill(98504356, 2) 

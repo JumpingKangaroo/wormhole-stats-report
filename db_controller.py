@@ -8,49 +8,55 @@ class mailDB:
   def __init__(self, db_filename, blank=False):
     try: 
       if blank:
-        # os.remove(db_filename)
         self.conn = sqlite3.connect(db_filename)
+        self.cursor = self.conn.cursor()
+        try:
+          self.cursor.execute("DROP TABLE killmails")
+          self.cursor.execute("DROP TABLE lossmails")
+        except:
+          assert(True)
         self.migrate()
       else:
         self.conn = sqlite3.connect(db_filename)        
-      self.cursor = self.conn.cursor()
-      if self.DEBUG: print(sqlite3.version)
+        self.cursor = self.conn.cursor()
     except Error as e:
-      print(e)
+      print("ERROR IN CREATION:", e)
       return None
 
   def __del__(self):
-    self.conn.commit()
-    self.cursor.close()
-    self.conn.close()
+    try:
+      self.conn.commit()
+      self.cursor.close()
+      self.conn.close()
+    except Error as e: 
+      print(e)
 
   def getCursor(self):
     return self.cursor
 
   def migrate(self):
-    c = self.conn.cursor()
+    c = self.cursor
 
     c.execute(''' CREATE TABLE killmails (
-      id integer, hash text, locationID integer, fittedValue real, 
+      id integer, hash text, locationID integer, totalValue real, 
       npc integer, awox integer, attackers text, victimShipType integer,
       victimDamage integer, victimCorp integer, victimAlliance integer,
       corpID integer
     ) ''')
 
     c.execute(''' CREATE TABLE lossmails (
-      id integer, hash text, locationID integer, fittedValue real, 
+      id integer, hash text, locationID integer, totalValue real, 
       npc integer, awox integer, attackers text, victimShipType integer,
       victimDamage integer, victimCorp integer, victimAlliance integer, 
       corpID integer
     ) ''')
 
   def addKillmail(self, zkbKill, ccpKill, mailType, corpID):
-    print("Adding killmail")
     # Load info from zkill dict
     killID = int(zkbKill["killmail_id"])
     killHash = str(zkbKill["zkb"]["hash"])
     locationID = int(zkbKill["zkb"]["locationID"])
-    fittedValue = float(zkbKill["zkb"]["fittedValue"])
+    totalValue = float(zkbKill["zkb"]["totalValue"])
     npc = int(zkbKill["zkb"]["npc"])
     awox = int(zkbKill["zkb"]["awox"])
     
@@ -65,16 +71,14 @@ class mailDB:
     corpID = int(corpID)
 
     # Assemble tuple
-    data = (killID, killHash, locationID, fittedValue, npc, awox, attackers, 
+    data = (killID, killHash, locationID, totalValue, npc, awox, attackers, 
             victimShipType, victimDamage, victimCorp, victimAlliance, corpID)
     if mailType == "kill":
       # Add to killmails table
-      print("adding to kills table")
       self.cursor.execute('''INSERT INTO killmails 
           VALUES (?,?,?,?,?,?,?,?,?,?,?,?)''', data)
     elif mailType == "loss":
       # Add to losses table
-      print("adding to losses table")
       self.cursor.execute('''INSERT INTO lossmails 
           VALUES (?,?,?,?,?,?,?,?,?,?,?,?)''', data)
     else:
