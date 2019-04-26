@@ -2,31 +2,46 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+import json
+
+def read_json(filename):
+  with open(filename) as json_file:
+    data = json.load(json_file)
+  return data
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
-app.layout = html.Div(children=[
-    html.H1(children='Hello Dash'),
-
-    html.Div(children='''
-        Dash: A web application framework for Python.
-    '''),
-
-    dcc.Graph(
-        id='example-graph',
-        figure={
-            'data': [
-                {'x': [1, 2, 3], 'y': [4, 1, 2], 'type': 'bar', 'name': 'SF'},
-                {'x': [1, 2, 3], 'y': [2, 4, 5], 'type': 'bar', 'name': u'Montréal'},
-            ],
-            'layout': {
-                'title': 'Dash Data Visualization'
-            }
-        }
-    )
-])
-
 if __name__ == '__main__':
+
+    names = read_json("names.json")
+    stats = read_json("stats.json")
+
+    killAmounts = []
+    namesData = []
+    valuesData = []
+    for key in stats:
+        namesData.append(names[key])
+        valuesData.append(stats[key]["totalKillsValue"])
+    killAmounts = [ { "y": namesData, "x": valuesData, 'type': 'bar', 'orientation': 'h'} ]
+
+    app.layout = html.Div(children=[
+        html.H1('Hello Wormholes', style={'textAlign': 'center', 'color': 'black'}),
+
+        html.Div(children='''
+            Wormhole stats
+        '''),
+
+        dcc.Graph(
+            id='kill-amounts',
+            figure={
+                'data': killAmounts,
+                'layout': {
+                    'title': 'Febuary Kill Stats'
+                }
+            }
+        )
+    ])
+
     app.run_server(debug=True)
