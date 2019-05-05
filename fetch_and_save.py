@@ -22,5 +22,5 @@ print("IDs:", corpIDs)
 killmails_db = mailDB("killmails.db", blank=True)
 
 for corpID in corpIDs:
-  # fetch_corp_info(corpID, month)
+  fetch_corp_info(corpID, month)
   json_to_database(corpID, killmails_db)

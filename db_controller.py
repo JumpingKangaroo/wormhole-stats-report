@@ -61,7 +61,6 @@ class mailDB:
     awox = int(zkbKill["zkb"]["awox"])
     
     # Load info from CCP dict (serializing lists)
-    print(json.dumps(ccpKill, indent=2))
     attackers = str(json.dumps(ccpKill["attackers"]))
     victimShipType = int(ccpKill["victim"]["ship_type_id"])
     victimDamage = int(ccpKill["victim"]["damage_taken"])

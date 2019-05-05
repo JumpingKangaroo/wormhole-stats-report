@@ -16,7 +16,7 @@ def calculateStats(database):
   for corpID in c:
     corpIDs.append(corpID[0])
 
-  # Calculate sums for every corp
+  # Calculate stats for every corp
   for corpID in corpIDs:
     # Set up data tuple for sql, and setup dict to store results
     data = (corpID,)
@@ -26,13 +26,15 @@ def calculateStats(database):
       FROM killmails 
       WHERE corpID IS ?
     ''', data)
-    finalSums[corpID]["totalKillsValue"] = c.fetchone()[0]
+    finalSums[corpID]["totalKillsValue"] = round(c.fetchone()[0], 1)
     # Find sum of value of total losses
     c.execute(''' SELECT SUM(totalValue)
       FROM lossmails 
       WHERE corpID IS ?
     ''', data)
-    finalSums[corpID]["totalLossesValue"] = c.fetchone()[0]
+    finalSums[corpID]["totalLossesValue"] = round(c.fetchone()[0], 1)
+    # Calculate efficiency
+    finalSums[corpID]["efficiency"] = round(finalSums[corpID]["totalKillsValue"] / (finalSums[corpID]["totalKillsValue"] + finalSums[corpID]["totalLossesValue"]) * 100, 1)
 
 
   # Save data to json file

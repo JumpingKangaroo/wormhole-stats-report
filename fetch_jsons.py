@@ -45,7 +45,13 @@ def fetch_ccp_kill_info(zkb_json):
     while not success:
       try:
         r = requests.get(url, headers=headers)
-        ccp_json["kills"][int(kill["killmail_id"])] = r.json()
+        r_json = r.json()
+        # Test for bad data
+        try:
+          test_var = r_json["victim"]
+        except:
+          pass
+        ccp_json["kills"][int(kill["killmail_id"])] = r_json
         success = True 
       except:
         print ("Failed, retrying")
