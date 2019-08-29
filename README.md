@@ -10,5 +10,5 @@ Application to show monthly reports in wormhole space, written in python. Curren
 ## Screenshots
 Here is a sample of the current report:
 
-[Stats screenshot](https://i.imgur.com/4J56G7V.png)
+![Stats screenshot](https://i.imgur.com/4J56G7V.png)
 
